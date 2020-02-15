@@ -385,6 +385,7 @@ li{
 .rec-mucWrap{
     margin:20px 0 0 -42px;
     box-sizing: content-box;
+    overflow:hidden;
 }
 .rec-mucWrap:after{
     display:block;
@@ -404,6 +405,7 @@ li{
     position:relative;
 }
 .rec-muc img{
+    width:100%;
     display:block;
 }
 .cover{
@@ -483,6 +485,7 @@ li{
     width:645px;
     height:150px;
     margin:28px auto 0 auto;
+    overflow:hidden;
     /* background-color: skyblue; */
 }
 .newDic-Name{
@@ -506,6 +509,10 @@ li{
     margin-bottom:7px;
     position: relative;
 }
+.newDic-muc img{
+    display:block;
+    width:100%;
+}
 .newDic-cover{
     width:118px;
     height:100px;
@@ -527,6 +534,7 @@ li{
     background-position: 0 -85px;
     background-repeat: no-repeat;
 }
+
 .newDic-muc:hover .newDic-play{
     display:block;
 }
@@ -584,6 +592,7 @@ li{
     background-image: url("../img/index_bill.png");
     background-position:-1px;
 }
+
 .notice-top{
     height:100px;
     padding:20px 0 0 19px;
@@ -620,6 +629,17 @@ li{
 }
 .notice-tit a{
     color:#000;
+}
+.notice-list span{
+    float: left;
+}
+.num-music{
+    display:block;
+    float:left;
+    width:90%;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow:hidden;
 }
 .notice-tit a:hover{
     text-decoration: underline;
