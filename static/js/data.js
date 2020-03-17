@@ -22,32 +22,44 @@ let cloudMusic = {
     //banner数据
     cloudMusic.banner = musicData("http://39.107.87.215:8889/banner");
     cloudMusic.banner.then(function(data){
+        let mohu = `
+        filter: blur(800px);
+        -webkit-filter: blur(800px);
+        -moz-filter: blur(800px);
+        -o-filter: blur(800px);
+        -ms-filter: blur(800px);
+        `;
         //渲染视图
         let ban = document.querySelector(".banner");
         let par_ban = document.querySelector(".par-ban");
+        let parbefor = document.querySelector(".par-ban:before")
         let prev = document.querySelector(".rev-left");
         let preNext = document.querySelector(".rev-right");
+        let brul = document.querySelector(".brul")
         // console.log(data)
         //获取图片地址
         let Image = data.banners
         let banImgStr = ""
         let circleStr = ""
         Image.forEach(function(item,index){
-            banImgStr += `  
-                <img src="${item.imageUrl}" index="${index}" style="z-index:${Image.length - index}">
-            `
+            // banImgStr += `  
+            //     <img src="${item.imageUrl}" index="${index}" style="z-index:${Image.length - index}">
+            // `
             circleStr +=`
                 <span class="circle" index="${index}"></span>
             `
         });
+        
         ban.innerHTML = `
             <a href="" class="ban-img">
-                <img src="${Image[0].imageUrl}" >
+                <img src=""/>
             </a>
             <div class="click-circle">
                 ${circleStr}
             </div>
         `
+        console.log(Image[0].imageUrl)
+        ;
         //初始化界面的节点
         let imgList = document.querySelector(".ban-img");
         let circle = document.querySelectorAll(".circle");
@@ -55,27 +67,50 @@ let cloudMusic = {
         //图片位置
         let imgLoc = 0;
         let moveLeft = true;
+        //透明度计时器
+        
+        let opanum = 0;
+        // let opa = setInterval(function(){
+        //     if(opanum<1){
+        //         opanum += 0.2;
+        //         imgList.innerHTML = `<img src="${Image[imgLoc].imageUrl}" style="transtion:all 1s;opacity:${opanum}"/>`;
+        //     }else{};
 
+        // },100)
         //更新视图
         function render(){
             if(moveLeft){
                 if(imgLoc>=0 && imgLoc<=Image.length-1){
                     createCricle()
-                    imgList.innerHTML = `<img src="${Image[imgLoc].imageUrl}">`;
+                    // imgList.innerHTML = `<img src="${Image[imgLoc].imageUrl}"/>`;
+                    let opa = setInterval(function(){
+                        if(opanum<1){
+                            opanum += 0.2;
+                            imgList.innerHTML = `<img src="${Image[imgLoc].imageUrl}" style="transtion:all 1s;opacity:${opanum}"/>`;
+                        }else{
+                            opanum = 0;
+                            clearInterval(opa)
+                            imgList.innerHTML = `<img src="${Image[imgLoc].imageUrl}" style="transtion:all 1s;opacity:1"/>`
+                        };
+            
+                    },100)
+                    brul.innerHTML = `<img src="${Image[imgLoc].imageUrl}" style="${mohu}"/>`
                 }else if(imgLoc=Image.length){
                     imgLoc = 0;
                     createCricle()
-                    imgList.innerHTML = `<img src="${Image[imgLoc].imageUrl}">`;
+                    imgList.innerHTML = `<img src="${Image[imgLoc].imageUrl}"/>`;
+                    brul.innerHTML = `<img src="${Image[imgLoc].imageUrl}" style="${mohu}"/>`
                 }
             }else{
-                console.log(imgLoc)
                if(imgLoc<0){
                     imgLoc = Image.length-1;
                     createCricle()
-                    imgList.innerHTML = `<img src="${Image[imgLoc].imageUrl}">`;
+                    imgList.innerHTML = `<img src="${Image[imgLoc].imageUrl}"/>`;
+                    brul.innerHTML = `<img src="${Image[imgLoc].imageUrl}" style="${mohu}"/>`
                }else{
                     createCricle()
-                    imgList.innerHTML = `<img src="${Image[imgLoc].imageUrl}">`;
+                    imgList.innerHTML = `<img src="${Image[imgLoc].imageUrl}"/>`;
+                    brul.innerHTML = `<img src="${Image[imgLoc].imageUrl}" style="${mohu}"/>`
                }
             }
         };
@@ -97,6 +132,17 @@ let cloudMusic = {
         }
 
         preNext.onclick = function(){
+            clearInterval(function(){
+                if(opanum<1){
+                    opanum += 0.2;
+                    imgList.innerHTML = `<img src="${Image[imgLoc].imageUrl}" style="transtion:all 1s;opacity:${opanum}"/>`;
+                }else{
+                    opanum = 0;
+                    clearInterval(opa)
+                    imgList.innerHTML = `<img src="${Image[imgLoc].imageUrl}" style="transtion:all 1s;opacity:1"/>`
+                };
+    
+            })
             moveLeft = true;
             imgList.innerHTML = "";
             imgLoc++;
@@ -133,10 +179,10 @@ let cloudMusic = {
     cloudMusic.recommend.then(function(data){
         let str = ""
         let recommendUl = document.querySelector(".rec-mucWrap");
-        let newdata = data.result;
-        // console.log(data)
+        let newdata = data.result;  
+        //拿到歌单数据
         newdata.forEach(function(item,index){
-            let read = String(item.playCount).length>4?Math.floor((item.playCount)/10000)+"万":item.playCount
+            let read = String(item.playCount).length>4?Math.floor((item.playCount)/10000)+"万":item.playCount;
             str += `
             <li>
                 <div class="rec-muc">
@@ -162,26 +208,30 @@ let cloudMusic = {
     //新碟上架数据
     cloudMusic.newdic = musicData("http://39.107.87.215:8889/album/newest");
     cloudMusic.newdic.then(function(data){
-        console.log(data)
         let newdicUl = document.querySelector(".newDic-Name")
         let newdata = data.albums;
         let str = ""
         let num = 0;
-        let newStr = ""
+        let newStr = "";
+        let ulwidth = null;
         newdata.forEach(function(item,index){
-            str += `
-            <li class="newDicList">
-                <div class="newDic-muc">
-                    <img src="${item.picUrl}" alt="">
-                    <a href="" class="newDic-cover"></a>
-                    <a href="" class="newDic-play"></a>
-                </div>
-                <p class="dictxt"><a href="" class="newDic-name">${item.name}</a></p>
-                <p class="dictxt"><a href="" class="newDic-txt">${item.artist.name}</a></p>
-            </li>
-            `
-        })
-        newdicUl.innerHTML = str
+            if(index<10){
+                ulwidth = index++;
+                str += `
+                <li class="newDicList">
+                    <div class="newDic-muc">
+                        <img src="${item.picUrl}" alt="">
+                        <a href="" class="newDic-cover"></a>
+                        <a href="" class="newDic-play"></a>
+                    </div>
+                    <p class="dictxt"><a href="" class="newDic-name">${item.name}</a></p>
+                    <p class="dictxt"><a href="" class="newDic-txt">${item.artist.name}</a></p>
+                </li>
+                `
+            }
+        });
+        newdicUl.innerHTML = str;
+        newdicUl.style.width = 129*10 + "px";
     })
 
     //榜单数据
@@ -197,7 +247,6 @@ let cloudMusic = {
         <a href="" class="notice-cover"></a>
         `
         let str = "";
-        console.log(logo)
         let num = 0;
         newdata.forEach(function(item,index){
             if(num<10){
@@ -225,7 +274,6 @@ let cloudMusic = {
         <a href="" class="notice-cover"></a>
         `
         let str = "";
-        console.log(logo)
         let num = 0;
         newdata.forEach(function(item,index){
             if(num<10){
@@ -253,7 +301,6 @@ let cloudMusic = {
         <a href="" class="notice-cover"></a>
         `
         let str = "";
-        console.log(logo)
         let num = 0;
         newdata.forEach(function(item,index){
             if(num<10){
